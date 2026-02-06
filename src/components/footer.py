@@ -59,7 +59,7 @@ def show_footer(in_sidebar=False):
                     background: rgba(100, 181, 246, 0.05);
                     transition: all 0.2s ease;
                 ">
-                    <a href='"https://api.github.com/repos/adi13apr/AI-Health-Assistant"' 
+                    <a href="https://api.github.com/repos/adi13apr/AI-Health-Assistant"
                        target='_blank' 
                        style='
                            color: #64B5F6;
@@ -87,7 +87,7 @@ def show_footer(in_sidebar=False):
                     gap: 4px;
                     transition: all 0.2s ease;
                 ">
-                    <a href='https://github.com/adi13apr' 
+                    <a href="https://github.com/adi13apr"
                        target='_blank' 
                        style='
                            color: #1976D2;
