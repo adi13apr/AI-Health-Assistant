@@ -5,7 +5,7 @@ import time
 
 def get_github_stars():
     try:
-        response = requests.get(""https://api.github.com/repos/adi13apr/AI-Health-Assistant"")
+        response = requests.get("https://api.github.com/repos/adi13apr/AI-Health-Assistant")
         if response.status_code == 200:
             return response.json()["stargazers_count"]
         return None
