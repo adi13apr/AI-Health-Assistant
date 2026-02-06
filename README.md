@@ -1,150 +1,117 @@
-# 🩺 HIA (Health Insights Agent)
+# 🩺 AI Health Assistant
 
-AI Agent to analyze blood reports and provide detailed health insights.
+An AI-powered health insights application that analyzes medical blood reports and provides structured, easy-to-understand health interpretations using LLM-based intelligence.
 
-<p align="center">
-  <a href="https://github.com/harshhh28/hia/issues"><img src="https://img.shields.io/github/issues/harshhh28/hia"></a> 
-  <a href="https://github.com/harshhh28/hia/stargazers"><img src="https://img.shields.io/github/stars/harshhh28/hia"></a>
-  <a href="https://github.com/harshhh28/hia/network/members"><img src="https://img.shields.io/github/forks/harshhh28/hia"></a>
-  <a href="https://github.com/harshhh28/hia/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/License-MIT-blue.svg">
-  </a>
-</p>
+## 🚀 Overview
 
-<p align="center">
-  <a href="#-features">Features</a> |
-  <a href="#%EF%B8%8F-tech-stack">Tech Stack</a> |
-  <a href="#-installation">Installation</a> |
-  <a href="#-contributing">Contributing</a> |
-  <a href="#%EF%B8%8F-author">Author</a>
-</p>
+AI Health Assistant is a healthcare-focused intelligent system designed to help users interpret blood test reports. It extracts medical parameters from uploaded PDFs and generates personalized health insights using AI models.
 
-<p align="center">
-  <a href="https://github.com/harshhh28/hia"><img src="https://raw.githubusercontent.com/harshhh28/hia/main/public/HIA_demo.gif" alt="Usage Demo"></a>
-</p>
+This project demonstrates practical implementation of:
 
-## 🌟 Features
+* AI-driven report analysis
+* Multi-model response architecture
+* Secure authentication
+* Healthcare data handling
 
-- Intelligent agent-based architecture with multi-model cascade system
-- In-context learning from previous analyses and knowledge base building
-- Medical report analysis with personalized health insights
-- PDF upload, validation and text extraction (up to 20MB)
-- Secure user authentication and session management
-- Session history with report analysis tracking
-- Modern, responsive UI with real-time feedback
+## 🌟 Key Features
+
+* 📄 Upload and analyze blood reports (PDF)
+* 🤖 AI-generated health insights
+* 🧠 Multi-model fallback system for reliable responses
+* 🔐 User authentication & session management
+* 📊 History tracking of previous analyses
+* ⚡ Responsive Streamlit-based interface
 
 ## 🛠️ Tech Stack
 
-- **Frontend Framework**: Streamlit
-- **AI Integration**: Multi-model architecture via Groq
-  - Primary: meta-llama/llama-4-maverick-17b-128e-instruct
-  - Secondary: llama-3.3-70b-versatile
-  - Tertiary: llama-3.1-8b-instant
-  - Fallback: llama3-70b-8192
-- **Database**: Supabase
-- **PDF Processing**: PDFPlumber
-- **Authentication**: Supabase Auth
+**Frontend**
 
-## 🚀 Installation
+* Streamlit
 
-#### Requirements 📋
+**Backend & AI**
 
-- Python 3.8+
-- Streamlit 1.30.0+
-- Supabase account
-- Groq API key
-- PDFPlumber
-- Python-magic-bin (Windows) or Python-magic (Linux/Mac)
+* Python
+* Groq LLM API
+* Multi-model orchestration
 
-#### Getting Started 📝
+**Database**
 
-1. Clone the repository:
+* Supabase
 
-```bash
-git clone https://github.com/harshhh28/hia.git
-cd hia
-```
+**Processing**
 
-2. Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-3. Required environment variables (in `.streamlit/secrets.toml`):
-
-```toml
-SUPABASE_URL = "your-supabase-url"
-SUPABASE_KEY = "your-supabase-key"
-GROQ_API_KEY = "your-groq-api-key"
-```
-
-4. Set up Supabase database schema:
-
-The application requires the following tables in your Supabase database:
-
-![database schema](https://raw.githubusercontent.com/harshhh28/hia/main/public/db/schema.png)
-
-You can use the SQL script provided at `public/db/script.sql` <a href="https://www.github.com/harshhh28/hia/blob/main/public/db/script.sql">[link]</a> to set up the required database schema.
-
-(PS: You can turn off the email confimation on signup in Supabase settings -> signup -> email)
-
-5. Run the application:
-
-```bash
-streamlit run src\main.py
-```
+* PDFPlumber for report text extraction
 
 ## 📁 Project Structure
 
 ```
-hia/
-├── requirements.txt
-├── README.md
-├── src/
-│   ├── main.py                 # Application entry point
-│   ├── auth/                   # Authentication related modules
-│   │   ├── auth_service.py     # Supabase auth integration
-│   │   └── session_manager.py  # Session management
-│   ├── components/             # UI Components
-│   │   ├── analysis_form.py    # Report analysis form
-│   │   ├── auth_pages.py       # Login/Signup pages
-│   │   ├── footer.py          # Footer component
-│   │   └── sidebar.py         # Sidebar navigation
-│   ├── config/                # Configuration files
-│   │   ├── app_config.py      # App settings
-│   │   └── prompts.py         # AI prompts
-│   ├── services/              # Service integrations
-│   │   └── ai_service.py      # AI service integration
-│   ├── agents/                # Agent-based architecture components
-│   │   ├── agent_manager.py   # Agent management
-│   │   └── model_fallback.py  # Model fallback logic
-│   └── utils/                 # Utility functions
-│       ├── validators.py      # Input validation
-│       └── pdf_extractor.py   # PDF processing
+src/
+ ├── main.py
+ ├── agents/
+ ├── services/
+ ├── auth/
+ ├── components/
+ └── utils/
 ```
 
-## 👥 Contributing
+## ⚙️ Installation
 
-Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on how to submit pull requests, the development workflow, coding standards, and more.
+### Requirements
 
-We appreciate all contributions, from reporting bugs and improving documentation to implementing new features.
+* Python 3.8+
+* Streamlit
+* Supabase account
+* Groq API key
 
-## 👨‍💻 Contributors
+### Steps
 
-Thanks to all the amazing contributors who have helped improve this project!
+1. Clone the repository:
 
-| Avatar | Name | GitHub | Role | Contributions | PR(s) | Notes |
-|--------|------|--------|------|---------------|-------|-------|
-| <img src="https://github.com/harshhh28.png" width="50px" height="50px" alt="harshhh28 avatar"/> | Harsh Gajjar | [harshhh28](https://github.com/harshhh28) | Project Creator & Maintainer | Core implementation, Documentation | N/A | Lead Developer |
-| <img src="https://github.com/gaurav98095.png" width="50px" height="50px" alt="gaurav98095 avatar"/> | Gaurav | [gaurav98095](https://github.com/gaurav98095) | Contributor | DB Schema, bugs | [#1](https://github.com/harshhh28/hia/pull/1), [#5](https://github.com/harshhh28/hia/pull/5), [#6](https://github.com/harshhh28/hia/pull/6), [#7](https://github.com/harshhh28/hia/pull/7) | Database Design, bugs |
+```
+git clone https://github.com/adi13apr/AI-Health-Assistant.git
+cd AI-Health-Assistant
+```
 
-<!-- To future contributors: Your profile will be added here when your PR is merged! -->
+2. Install dependencies:
 
-## 📄 License
+```
+pip install -r requirements.txt
+```
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/harshhh28/hia/blob/main/LICENSE) file for details.
+3. Add environment variables in:
 
-## 🙋‍♂️ Author
+```
+.streamlit/secrets.toml
+```
 
-Created by [Harsh Gajjar](https://harshgajjar.vercel.app)
+4. Run the app:
+
+```
+streamlit run src/main.py
+```
+
+## 💡 Learning Outcomes
+
+Through this project, I worked on:
+
+* AI integration in real-world healthcare use cases
+* LLM prompt engineering
+* Multi-agent response orchestration
+* Secure session handling
+* Medical data interpretation pipelines
+
+## 🔮 Future Improvements
+
+* Add ML-based disease risk prediction
+* Deploy on cloud for public access
+* Add chatbot-based symptom assistant
+* Improve UI/UX
+
+## 📌 Project Purpose
+
+This project was developed to explore the application of AI in healthcare analytics and to build a system capable of assisting users in understanding complex medical reports.
+
+## 👨‍💻 Developer
+
+Aditya Chauhan
+B.Tech | AI & ML Enthusiast
