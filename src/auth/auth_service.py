@@ -119,37 +119,38 @@ class AuthService:
             pass
 
     # ---------------- CREATE SESSION ---------------- #
-    def create_session(self, user_id, title=None):
-        """Create new chat session"""
+def create_session(self, user_id, title=None):
+    try:
+        from datetime import datetime
 
-        try:
-            now = datetime.now()
+        now = datetime.now()
+        default_title = f"{now.strftime('%d-%m-%Y')} | {now.strftime('%H:%M:%S')}"
 
-            default_title = (
-                f"{now.strftime('%d-%m-%Y')} | "
-                f"{now.strftime('%H:%M:%S')}"
-            )
+        data = {
+            "user_id": user_id,
+            "title": title or default_title
+        }
 
-            data = {
-                "user_id": user_id,
-                "title": title or default_title
-            }
+        print("Creating session with:", data)   # DEBUG
 
-            response = (
-                self.supabase
-                .table("chat_sessions")
-                .insert(data)
-                .execute()
-            )
+        response = (
+            self.supabase
+            .table("chat_sessions")
+            .insert(data)
+            .execute()
+        )
 
-            if response.data and len(response.data) > 0:
-                return True, response.data[0]
+        print("Supabase response:", response)   # DEBUG
 
-            return False, "Insert failed"
+        if response.data:
+            return True, response.data[0]
 
-        except Exception as e:
-            print("Create session error:", e)
-            return False, str(e)
+        return False, "No data returned"
+
+    except Exception as e:
+        print("CREATE SESSION ERROR:", e)   # 👈 REAL ERROR
+        return False, str(e)
+
 
     # ---------------- GET USER SESSIONS ---------------- #
     def get_user_sessions(self, user_id):
