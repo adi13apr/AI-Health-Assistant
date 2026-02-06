@@ -58,7 +58,7 @@ def show_sidebar():
             st.rerun()
         
         # Add footer to sidebar
-        show_footer(in_sidebar=True)
+        show_footer()
 
 def show_session_list():
     if st.session_state.user and 'id' in st.session_state.user:
