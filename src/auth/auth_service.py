@@ -6,6 +6,7 @@ import re
 
 class AuthService:
 
+    # ---------------- INIT ---------------- #
     def __init__(self):
         try:
             self.supabase = create_client(
@@ -13,61 +14,123 @@ class AuthService:
                 st.secrets["SUPABASE_KEY"]
             )
         except Exception as e:
-            st.error(f"Failed to initialize services: {str(e)}")
+            st.error(f"Failed to initialize Supabase: {str(e)}")
             raise e
 
         self.try_restore_session()
 
-    # ---------------- SESSION RESTORE ---------------- #
+    # ---------------- RESTORE SESSION ---------------- #
     def try_restore_session(self):
+        """Restore Supabase session if exists"""
+
         try:
             session = self.supabase.auth.get_session()
+
             if session and session.access_token:
                 user = self.supabase.auth.get_user()
+
                 if user and user.user:
                     user_data = self.get_user_data(user.user.id)
+
                     if user_data:
                         st.session_state.auth_token = session.access_token
                         st.session_state.refresh_token = session.refresh_token
                         st.session_state.user = user_data
+
         except Exception:
             pass
 
-    # ---------------- SIGN IN ---------------- #
-    def sign_in(self, email, password):
+    # ---------------- VALIDATE TOKEN ---------------- #
+    def validate_session_token(self):
+        """Validate existing Supabase session"""
+
         try:
-            auth_response = self.supabase.auth.sign_in_with_password(
-                {"email": email, "password": password}
-            )
+            session = self.supabase.auth.get_session()
 
-            if auth_response and auth_response.user:
+            if not session or not session.access_token:
+                return None
 
-                user_data = self.get_user_data(auth_response.user.id)
+            user = self.supabase.auth.get_user()
 
-                st.session_state.auth_token = auth_response.session.access_token
-                st.session_state.refresh_token = auth_response.session.refresh_token
-                st.session_state.user = user_data
+            if not user or not user.user:
+                return None
 
-                return True, user_data
+            return self.get_user_data(user.user.id)
 
-            return False, "Invalid login"
+        except Exception:
+            return None
+
+    # ---------------- SIGN UP ---------------- #
+    def sign_up(self, email, password, name):
+
+        try:
+            auth_response = self.supabase.auth.sign_up({
+                "email": email,
+                "password": password,
+                "options": {"data": {"name": name}},
+            })
+
+            if not auth_response.user:
+                return False, "Signup failed"
+
+            user_data = {
+                "id": auth_response.user.id,
+                "email": email,
+                "name": name,
+                "created_at": datetime.now().isoformat(),
+            }
+
+            self.supabase.table("users").insert(user_data).execute()
+
+            return True, user_data
 
         except Exception as e:
             return False, str(e)
 
-    # ---------------- CREATE SESSION (FIXED) ---------------- #
-    def create_session(self, user_id, title=None):
-        """Create a new chat session"""
+    # ---------------- SIGN IN ---------------- #
+    def sign_in(self, email, password):
 
         try:
-            current_time = datetime.now()
+            auth_response = self.supabase.auth.sign_in_with_password({
+                "email": email,
+                "password": password
+            })
+
+            if not auth_response.user:
+                return False, "Invalid login"
+
+            user_data = self.get_user_data(auth_response.user.id)
+
+            st.session_state.auth_token = auth_response.session.access_token
+            st.session_state.refresh_token = auth_response.session.refresh_token
+            st.session_state.user = user_data
+
+            return True, user_data
+
+        except Exception as e:
+            return False, str(e)
+
+    # ---------------- SIGN OUT ---------------- #
+    def sign_out(self):
+
+        try:
+            self.supabase.auth.sign_out()
+        except Exception:
+            pass
+
+    # ---------------- CREATE SESSION ---------------- #
+    def create_session(self, user_id, title=None):
+        """Create new chat session"""
+
+        try:
+            now = datetime.now()
 
             default_title = (
-                f"{current_time.strftime('%d-%m-%Y')} | "
-                f"{current_time.strftime('%H:%M:%S')}"
+                f"{now.strftime('%d-%m-%Y')} | "
+                f"{now.strftime('%H:%M:%S')}"
             )
 
-            session_data = {
+            data = {
                 "user_id": user_id,
                 "title": title or default_title
             }
@@ -75,7 +138,7 @@ class AuthService:
             response = (
                 self.supabase
                 .table("chat_sessions")
-                .insert(session_data)
+                .insert(data)
                 .execute()
             )
 
@@ -90,8 +153,9 @@ class AuthService:
 
     # ---------------- GET USER SESSIONS ---------------- #
     def get_user_sessions(self, user_id):
+
         try:
-            result = (
+            response = (
                 self.supabase
                 .table("chat_sessions")
                 .select("*")
@@ -100,36 +164,38 @@ class AuthService:
                 .execute()
             )
 
-            return True, result.data
+            return True, response.data
 
         except Exception as e:
             return False, str(e)
 
     # ---------------- SAVE MESSAGE ---------------- #
     def save_chat_message(self, session_id, content, role="user"):
+
         try:
-            message_data = {
+            data = {
                 "session_id": session_id,
                 "content": content,
                 "role": role
             }
 
-            result = (
+            response = (
                 self.supabase
                 .table("chat_messages")
-                .insert(message_data)
+                .insert(data)
                 .execute()
             )
 
-            return True, result.data[0]
+            return True, response.data[0]
 
         except Exception as e:
             return False, str(e)
 
     # ---------------- GET MESSAGES ---------------- #
     def get_session_messages(self, session_id):
+
         try:
-            result = (
+            response = (
                 self.supabase
                 .table("chat_messages")
                 .select("*")
@@ -138,21 +204,24 @@ class AuthService:
                 .execute()
             )
 
-            return True, result.data
+            return True, response.data
 
         except Exception as e:
             return False, str(e)
 
     # ---------------- DELETE SESSION ---------------- #
     def delete_session(self, session_id):
-        try:
-            self.supabase.table("chat_messages").delete().eq(
-                "session_id", session_id
-            ).execute()
 
-            self.supabase.table("chat_sessions").delete().eq(
-                "id", session_id
-            ).execute()
+        try:
+            self.supabase.table("chat_messages") \
+                .delete() \
+                .eq("session_id", session_id) \
+                .execute()
+
+            self.supabase.table("chat_sessions") \
+                .delete() \
+                .eq("id", session_id) \
+                .execute()
 
             return True, None
 
@@ -161,6 +230,7 @@ class AuthService:
 
     # ---------------- GET USER DATA ---------------- #
     def get_user_data(self, user_id):
+
         try:
             response = (
                 self.supabase
